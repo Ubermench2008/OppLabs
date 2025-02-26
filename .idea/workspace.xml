@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e721faff-af9e-403c-b1e3-79f7f27e9ea4" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/1/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/1/run_aout.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/1/runsch.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/.idea/opp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/1/.idea/opp.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/1/a.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/lab1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/lab1.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/lab1_omp_var1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/lab1_omp_var1.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/lab1_omp_var2.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/lab1_omp_var2.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/matrix_generators.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/matrix_generators.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/matrix_generators_omp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/matrix_generators_omp.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1/run_omp.sh" beforeDir="false" afterPath="$PROJECT_DIR$/1/run_omp.sh" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2024" />
+    <option name="minorVersion" value="3.3" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2tLLXwvlRhZqJJeaRDPyxjsBxnj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "//wsl.localhost/Ubuntu/home/ivan/opp",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "//wsl.localhost/Ubuntu/home/ivan/opp/main.cpp",
+    "settings.editor.selected.configurable": "CPPToolchains",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e721faff-af9e-403c-b1e3-79f7f27e9ea4" name="Changes" comment="" />
+      <created>1740126457075</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1740126457075</updated>
+      <workItem from="1740126466585" duration="6499000" />
+      <workItem from="1740212627546" duration="32000" />
+      <workItem from="1740540362658" duration="693000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/1/matrix_generators.cpp</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
