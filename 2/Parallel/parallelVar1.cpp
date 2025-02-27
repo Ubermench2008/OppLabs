@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <chrono>
 #include <string>
-#include "utils.hpp"  // Функции generateMatrix, suggestTau, computeNorm и computeResidual определены в utils.hpp
+#include "utils.hpp"
 
 using namespace std;
 using namespace std::chrono;

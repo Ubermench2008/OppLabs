@@ -26,7 +26,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e721faff-af9e-403c-b1e3-79f7f27e9ea4" name="Changes" comment="">
+    <list default="true" id="e721faff-af9e-403c-b1e3-79f7f27e9ea4" name="Changes" comment="initial">
       <change afterPath="$PROJECT_DIR$/1/.idea/vcs.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/1/run_aout.sh" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/1/runsch.sh" afterDir="false" />
@@ -100,7 +100,7 @@
       <updated>1740126457075</updated>
       <workItem from="1740126466585" duration="6499000" />
       <workItem from="1740212627546" duration="32000" />
-      <workItem from="1740540362658" duration="693000" />
+      <workItem from="1740540362658" duration="1007000" />
     </task>
     <servers />
   </component>
@@ -111,6 +111,10 @@
     <isAutomaticCheckingOnLaunch value="false" />
     <isAutomaticFoundErrors value="true" />
     <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="initial" />
+    <option name="LAST_COMMIT_MESSAGE" value="initial" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
