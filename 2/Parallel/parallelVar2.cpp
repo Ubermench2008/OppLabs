@@ -84,15 +84,28 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    vector<double> b_local(local_N);
+     // Распределяем вектор b между процессами
+    vector<double> b_local(local_N); //в каждом процессе хранится часть вектора b
     if (rank == 0) {
         MPI_Scatterv(b_full.data(), sendcounts.data(), displs.data(), MPI_DOUBLE,
                      b_local.data(), local_N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        //Если процесс ранга 0, то он раздаёт части вектора b_full остальным процессам
+        //b_full.data(): Указатель на полный вектор b (0 процесс)
+        //sendcounts.data() - кол-во элементов отправляемых каждому
+        //displs.data() - смещение для каждого процесса
+        //MPI_DOUBLE - тип
+        //b_local - фрагмент b для каждого процесса
+        //local_N - сколько элементов
+        //MPI_DOUBLE - тип
+        //0 - процесс отправитель
+        //MPI_COMM_WORLD - кому отправляем
     } else {
         MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE,
                      b_local.data(), local_N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        //Если процесс не 0, он получает свою часть данных
     }
 
+    //инициализируем каждому процессу по вектору из local_N элементов
     vector<double> x_local(local_N, 0.0);
 
     double normB_local_sq = 0.0;
@@ -130,7 +143,7 @@ int main(int argc, char* argv[]) {
 
         if (global_normR / normB < 0.00001)
             break;
-
+		//Каждый процесс обновляет только свой фрагмент (x_local)
         for (int i = 0; i < local_N; i++) {
             x_local[i] -= tau * r_local[i];
         }
@@ -140,16 +153,18 @@ int main(int argc, char* argv[]) {
     auto end_time = high_resolution_clock::now();
     double elapsed_seconds = duration_cast<microseconds>(end_time - start_time).count() / 1e6;
 
+    //собрали глобальный x со всех процессов
     vector<double> x_global(N, 0.0);
     MPI_Allgatherv(x_local.data(), local_N, MPI_DOUBLE,
                    x_global.data(), sendcounts.data(), displs.data(), MPI_DOUBLE,
                    MPI_COMM_WORLD);
-
+	//вычислили его r
     vector<double> r_local = computeResidual(A_local, x_global, b_local);
     double local_norm_sq = 0.0;
     for (double val : r_local)
         local_norm_sq += val * val;
     double final_norm_sq = 0.0;
+    //редукцией по всем процессам собираем общую норму
     MPI_Allreduce(&local_norm_sq, &final_norm_sq, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
     double final_norm = sqrt(final_norm_sq);
 

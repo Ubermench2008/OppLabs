@@ -27,20 +27,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e721faff-af9e-403c-b1e3-79f7f27e9ea4" name="Changes" comment="initial">
-      <change afterPath="$PROJECT_DIR$/1/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/1/run_aout.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/1/runsch.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/1/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/.idea/opp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/1/.idea/opp.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/1/a.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/lab1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/lab1.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/lab1_omp_var1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/lab1_omp_var1.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/lab1_omp_var2.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/lab1_omp_var2.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/matrix_generators.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/matrix_generators.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/matrix_generators_omp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1/matrix_generators_omp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1/run_omp.sh" beforeDir="false" afterPath="$PROJECT_DIR$/1/run_omp.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2/Parallel/parallelVar1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/2/Parallel/parallelVar1.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2/Parallel/parallelVar2.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/2/Parallel/parallelVar2.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +41,7 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/1" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
@@ -68,28 +57,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.west.config.association.type.startup.service": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "//wsl.localhost/Ubuntu/home/ivan/opp",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "//wsl.localhost/Ubuntu/home/ivan/opp/main.cpp",
-    "settings.editor.selected.configurable": "CPPToolchains",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;//wsl.localhost/Ubuntu/home/ivan/opp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;//wsl.localhost/Ubuntu/home/ivan/opp/main.cpp&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -100,7 +89,9 @@
       <updated>1740126457075</updated>
       <workItem from="1740126466585" duration="6499000" />
       <workItem from="1740212627546" duration="32000" />
-      <workItem from="1740540362658" duration="1007000" />
+      <workItem from="1740540362658" duration="2306000" />
+      <workItem from="1740555565415" duration="600000" />
+      <workItem from="1740657052884" duration="603000" />
     </task>
     <servers />
   </component>
