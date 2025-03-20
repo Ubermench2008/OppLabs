@@ -103,9 +103,9 @@ int main(int argc, char** argv) {
     }
 
     MPI_Datatype SUB_C, SUB_C_RESIZED;
-    int sizes[2]    = { n1, n3 };
+    int sizes[2] = { n1, n3 };
     int subsizes[2] = { sub_n, sub_m };
-    int starts[2]   = { 0, 0 };
+    int starts[2] = { 0, 0 };
     MPI_Type_create_subarray(2, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &SUB_C);
     MPI_Type_create_resized(SUB_C, 0, sub_n * sub_m * sizeof(double), &SUB_C_RESIZED);
     MPI_Type_commit(&SUB_C_RESIZED);
@@ -119,10 +119,9 @@ int main(int argc, char** argv) {
         displs[proc] = proc;
     }
 
-    MPI_Gatherv(subC.data(), localCount, MPI_DOUBLE,
-                (coords[0] == 0 && coords[1] == 0 ? C.data() : nullptr),
-                recvcounts.data(), displs.data(), SUB_C_RESIZED,
-                0, gridComm);
+    MPI_Gatherv(subC.data(), localCount, MPI_DOUBLE, (coords[0] == 0 && coords[1] == 0 ? C.data() : nullptr), 
+        recvcounts.data(), displs.data(), SUB_C_RESIZED,
+        0, gridComm);
 
     MPI_Type_free(&SUB_C_RESIZED);
 
