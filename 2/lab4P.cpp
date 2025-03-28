@@ -24,6 +24,7 @@ constexpr double hx = Dx / (Nx - 1.0);
 constexpr double hy = Dy / (Ny - 1.0);
 constexpr double hz = Dz / (Nz - 1.0);
 
+// Вычисляем постоянный множитель один раз
 constexpr double invA = 1.0 / (2.0 / (hx * hx) + 2.0 / (hy * hy) + 2.0 / (hz * hz) + a);
 
 double phi_function(double x, double y, double z) {
@@ -146,6 +147,7 @@ int main(int argc, char** argv) {
         timeStart = MPI_Wtime();
     }
 
+    // Инициализация внутренних и граничных значений
     for (int z = 0; z < layerHeight; ++z) {
         for (int y = 0; y < Ny; ++y) {
             for (int x = 0; x < Nx; ++x) {
@@ -229,10 +231,6 @@ int main(int argc, char** argv) {
     if (rank == 0) {
         timeFinish = MPI_Wtime();
     }
-
-    int maxCounter;
-    MPI_Allreduce(&counter, &maxCounter, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
-    counter = maxCounter;
 
     CalculateMaxDifference(rank, layerHeight, Phi);
 
