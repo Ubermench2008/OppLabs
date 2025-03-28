@@ -24,6 +24,8 @@ constexpr double hx = Dx / (Nx - 1.0);
 constexpr double hy = Dy / (Ny - 1.0);
 constexpr double hz = Dz / (Nz - 1.0);
 
+constexpr double invA = 1.0 / (2.0 / (hx * hx) + 2.0 / (hy * hy) + 2.0 / (hz * hz) + a);
+
 double phi_function(double x, double y, double z) {
     return x * x + y * y + z * z;
 }
@@ -40,11 +42,10 @@ double JacobiMethod(int rank, int layerHeight, const std::vector<double>& prevPh
     double xComp = (prevPhi[index3D(x - 1, y, z)] + prevPhi[index3D(x + 1, y, z)]) / (hx * hx);
     double yComp = (prevPhi[index3D(x, y - 1, z)] + prevPhi[index3D(x, y + 1, z)]) / (hy * hy);
     double zComp = (prevPhi[index3D(x, y, z - 1)] + prevPhi[index3D(x, y, z + 1)]) / (hz * hz);
-    double mult = 1.0 / (2.0 / (hx * hx) + 2.0 / (hy * hy) + 2.0 / (hz * hz) + a);
     double x_coord = X0 + x * hx;
     double y_coord = Y0 + y * hy;
     double z_coord = Z0 + (z + layerHeight * rank) * hz;
-    return mult * (xComp + yComp + zComp - rho(x_coord, y_coord, z_coord));
+    return invA * (xComp + yComp + zComp - rho(x_coord, y_coord, z_coord));
 }
 
 double JacobiMethodTopEdge(int rank, int layerHeight, const std::vector<double>& prevPhi, int x, int y, const std::vector<double>& upLayer) {
@@ -52,11 +53,10 @@ double JacobiMethodTopEdge(int rank, int layerHeight, const std::vector<double>&
     double xComp = (prevPhi[index3D(x - 1, y, z)] + prevPhi[index3D(x + 1, y, z)]) / (hx * hx);
     double yComp = (prevPhi[index3D(x, y - 1, z)] + prevPhi[index3D(x, y + 1, z)]) / (hy * hy);
     double zComp = (prevPhi[index3D(x, y, z - 1)] + upLayer[y * Nx + x]) / (hz * hz);
-    double mult = 1.0 / (2.0 / (hx * hx) + 2.0 / (hy * hy) + 2.0 / (hz * hz) + a);
     double x_coord = X0 + x * hx;
     double y_coord = Y0 + y * hy;
     double z_coord = Z0 + ((layerHeight - 1) + layerHeight * rank) * hz;
-    return mult * (xComp + yComp + zComp - rho(x_coord, y_coord, z_coord));
+    return invA * (xComp + yComp + zComp - rho(x_coord, y_coord, z_coord));
 }
 
 double JacobiMethodBottomEdge(int rank, int layerHeight, const std::vector<double>& prevPhi, int x, int y, const std::vector<double>& downLayer) {
@@ -64,11 +64,10 @@ double JacobiMethodBottomEdge(int rank, int layerHeight, const std::vector<doubl
     double xComp = (prevPhi[index3D(x - 1, y, z)] + prevPhi[index3D(x + 1, y, z)]) / (hx * hx);
     double yComp = (prevPhi[index3D(x, y - 1, z)] + prevPhi[index3D(x, y + 1, z)]) / (hy * hy);
     double zComp = (downLayer[y * Nx + x] + prevPhi[index3D(x, y, z + 1)]) / (hz * hz);
-    double mult = 1.0 / (2.0 / (hx * hx) + 2.0 / (hy * hy) + 2.0 / (hz * hz) + a);
     double x_coord = X0 + x * hx;
     double y_coord = Y0 + y * hy;
     double z_coord = Z0 + (layerHeight * rank) * hz;
-    return mult * (xComp + yComp + zComp - rho(x_coord, y_coord, z_coord));
+    return invA * (xComp + yComp + zComp - rho(x_coord, y_coord, z_coord));
 }
 
 void CalculateCenter(int layerHeight, const std::vector<double>& prevPhi, std::vector<double>& Phi, int rank, char& flag) {
