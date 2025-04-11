@@ -9,10 +9,9 @@
 #include <algorithm>
 #include <utility>
 
-#define N_TASKS 320
+#define N_TASKS 200
 #define REQUEST_TAG 0
 #define TASK_TAG 1
-
 #define TOTAL_DIFFICULTY_CONST 2000000000
 
 struct Task {
@@ -109,59 +108,63 @@ void server_thread(int rank, int size, std::vector<Task> &tasks, const MPI_Datat
     }
 }
 
+
+void distributionType0(int total_tasks, int size, std::vector<int>& sendcounts) {
+    int base = total_tasks / size;
+    int remainder = total_tasks % size;
+    for (int i = 0; i < size; i++) {
+        sendcounts[i] = base + (i < remainder ? 1 : 0);
+    }
+}
+
+void distributionType1(int total_tasks, int size, std::vector<int>& sendcounts) {
+    int sum_indices = size * (size + 1) / 2;
+    int c = total_tasks / sum_indices;
+    int sum_assigned = 0;
+    for (int i = 0; i < size; i++) {
+        sendcounts[i] = (i + 1) * c;
+        sum_assigned += sendcounts[i];
+    }
+    int diff = total_tasks - sum_assigned;
+    int i = 0;
+    while(diff > 0) {
+        sendcounts[i % size]++;
+        diff--;
+        i++;
+    }
+}
+
+void distributionType2(int total_tasks, int size, std::vector<int>& sendcounts) {
+    if (size > 1) {
+        sendcounts[0] = total_tasks / 2;
+        int remainder = total_tasks - sendcounts[0];
+        int per_other = remainder / (size - 1);
+        int extra = remainder % (size - 1);
+        for (int i = 1; i < size; i++) {
+            sendcounts[i] = per_other + ((i - 1) < extra ? 1 : 0);
+        }
+    } else {
+        sendcounts[0] = total_tasks;
+    }
+}
+
 void create_distribution(int distributionType, int total_tasks, int size,
-                         std::vector<int>& sendcounts, std::vector<int>& displs)
-{
+                         std::vector<int>& sendcounts, std::vector<int>& displs) {
     sendcounts.resize(size, 0);
     displs.resize(size, 0);
     switch(distributionType) {
-        case 0: {
-            int base = total_tasks / size;
-            int remainder = total_tasks % size;
-            for (int i = 0; i < size; i++) {
-                sendcounts[i] = base + (i < remainder ? 1 : 0);
-            }
+        case 0:
+            distributionType0(total_tasks, size, sendcounts);
             break;
-        }
-        case 1: {
-            int sum_indices = size * (size + 1) / 2;
-            int c = total_tasks / sum_indices;
-            int sum_assigned = 0;
-            for (int i = 0; i < size; i++) {
-                sendcounts[i] = (i + 1) * c;
-                sum_assigned += sendcounts[i];
-            }
-            int diff = total_tasks - sum_assigned;
-            int i = 0;
-            while(diff > 0) {
-                sendcounts[i % size]++;
-                diff--;
-                i++;
-            }
+        case 1:
+            distributionType1(total_tasks, size, sendcounts);
             break;
-        }
-        case 2: {
-            if (size > 1) {
-                sendcounts[0] = total_tasks / 2;
-                int remainder = total_tasks - sendcounts[0];
-                int per_other = remainder / (size - 1);
-                int extra = remainder % (size - 1);
-                for (int i = 1; i < size; i++) {
-                    sendcounts[i] = per_other + ((i - 1) < extra ? 1 : 0);
-                }
-            } else {
-                sendcounts[0] = total_tasks;
-            }
+        case 2:
+            distributionType2(total_tasks, size, sendcounts);
             break;
-        }
-        default: {
-            int base = total_tasks / size;
-            int remainder = total_tasks % size;
-            for (int i = 0; i < size; i++) {
-                sendcounts[i] = base + (i < remainder ? 1 : 0);
-            }
+        default:
+            distributionType0(total_tasks, size, sendcounts);
             break;
-        }
     }
     displs[0] = 0;
     for (int i = 1; i < size; i++) {
@@ -169,80 +172,104 @@ void create_distribution(int distributionType, int total_tasks, int size,
     }
 }
 
+void difficultyDistributionType0(int total_tasks, std::vector<int>& difficulties) {
+    int diff_const = TOTAL_DIFFICULTY_CONST / total_tasks;
+    for (int i = 0; i < total_tasks; ++i) {
+        difficulties[i] = diff_const;
+    }
+}
+
+
+void difficultyDistributionType1(int total_tasks, std::vector<int>& difficulties) {
+    double sum_seq = total_tasks * (total_tasks + 1) / 2.0;
+    double c = TOTAL_DIFFICULTY_CONST / sum_seq;
+    
+    std::vector<int> tmp(total_tasks, 0);
+    std::vector<double> fractions(total_tasks, 0.0);
+    long long computedSum = 0;
+    
+    for (int i = 0; i < total_tasks; ++i) {
+        double exact = (i + 1) * c;
+        tmp[i] = static_cast<int>(std::floor(exact));
+        computedSum += tmp[i];
+        fractions[i] = exact - tmp[i];
+    }
+    
+    int remainder = TOTAL_DIFFICULTY_CONST - computedSum;
+    std::vector<std::pair<int, double>> idxFrac;
+    
+    for (int i = 0; i < total_tasks; ++i) {
+        idxFrac.push_back({i, fractions[i]});
+    }
+    
+    std::sort(idxFrac.begin(), idxFrac.end(),
+              [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
+                  return a.second > b.second;
+              });
+    
+    for (int i = 0; i < remainder; i++) {
+        tmp[idxFrac[i].first] += 1;
+    }
+    
+    for (int i = 0; i < total_tasks; i++) {
+        difficulties[i] = tmp[i];
+    }
+}
+
+
+void difficultyDistributionType2(int total_tasks, std::vector<int>& difficulties) {
+    int half = total_tasks / 2;
+    
+    double low_exact = static_cast<double>(TOTAL_DIFFICULTY_CONST) / (total_tasks + half);
+    double high_exact = 2.0 * low_exact;
+    
+    std::vector<int> tmp(total_tasks, 0);
+    std::vector<double> fractions(total_tasks, 0.0);
+    long long computedSum = 0;
+    
+    for (int i = 0; i < total_tasks; ++i) {
+        double exact = (i < half) ? high_exact : low_exact;
+        tmp[i] = static_cast<int>(std::floor(exact));
+        computedSum += tmp[i];
+        fractions[i] = exact - tmp[i];
+    }
+    
+    int remainder = TOTAL_DIFFICULTY_CONST - computedSum;
+    std::vector<std::pair<int, double>> idxFrac;
+    
+    for (int i = 0; i < total_tasks; ++i) {
+        idxFrac.push_back({i, fractions[i]});
+    }
+    
+    std::sort(idxFrac.begin(), idxFrac.end(),
+              [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
+                  return a.second > b.second;
+              });
+    
+    for (int i = 0; i < remainder; i++) {
+        tmp[idxFrac[i].first] += 1;
+    }
+    
+    for (int i = 0; i < total_tasks; i++) {
+        difficulties[i] = tmp[i];
+    }
+}
+
 void create_difficulty_distribution(int distributionType, int total_tasks, std::vector<int>& difficulties) {
     difficulties.resize(total_tasks);
     switch(distributionType) {
-        case 0: {
-            int diff_const = TOTAL_DIFFICULTY_CONST / total_tasks;
-            for (int i = 0; i < total_tasks; ++i) {
-                difficulties[i] = diff_const;
-            }
+        case 0:
+            difficultyDistributionType0(total_tasks, difficulties);
             break;
-        }
-        case 1: {
-            double sum_seq = total_tasks * (total_tasks + 1) / 2.0;
-            double c = TOTAL_DIFFICULTY_CONST / sum_seq;
-            std::vector<int> tmp(total_tasks, 0);
-            long long computedSum = 0;
-            std::vector<double> fractions(total_tasks, 0.0);
-            for (int i = 0; i < total_tasks; ++i) {
-                double exact = (i + 1) * c;
-                tmp[i] = static_cast<int>(std::floor(exact));
-                computedSum += tmp[i];
-                fractions[i] = exact - tmp[i];
-            }
-            int remainder = TOTAL_DIFFICULTY_CONST - computedSum;
-            std::vector<std::pair<int, double>> idxFrac;
-            for (int i = 0; i < total_tasks; ++i) {
-                idxFrac.push_back({i, fractions[i]});
-            }
-            std::sort(idxFrac.begin(), idxFrac.end(), [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-                return a.second > b.second;
-            });
-            for (int i = 0; i < remainder; i++) {
-                tmp[idxFrac[i].first] += 1;
-            }
-            for (int i = 0; i < total_tasks; i++) {
-                difficulties[i] = tmp[i];
-            }
+        case 1:
+            difficultyDistributionType1(total_tasks, difficulties);
             break;
-        }
-        case 2: {
-            int half = total_tasks / 2;
-            double low_exact = static_cast<double>(TOTAL_DIFFICULTY_CONST) / (total_tasks + half);
-            double high_exact = 2.0 * low_exact;
-            std::vector<int> tmp(total_tasks, 0);
-            long long computedSum = 0;
-            std::vector<double> fractions(total_tasks, 0.0);
-            for (int i = 0; i < total_tasks; ++i) {
-                double exact = (i < half) ? high_exact : low_exact;
-                tmp[i] = static_cast<int>(std::floor(exact));
-                computedSum += tmp[i];
-                fractions[i] = exact - tmp[i];
-            }
-            int remainder = TOTAL_DIFFICULTY_CONST - computedSum;
-            std::vector<std::pair<int, double>> idxFrac;
-            for (int i = 0; i < total_tasks; ++i) {
-                idxFrac.push_back({i, fractions[i]});
-            }
-            std::sort(idxFrac.begin(), idxFrac.end(), [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-                return a.second > b.second;
-            });
-            for (int i = 0; i < remainder; i++) {
-                tmp[idxFrac[i].first] += 1;
-            }
-            for (int i = 0; i < total_tasks; i++) {
-                difficulties[i] = tmp[i];
-            }
+        case 2:
+            difficultyDistributionType2(total_tasks, difficulties);
             break;
-        }
-        default: {
-            int diff_const = TOTAL_DIFFICULTY_CONST / total_tasks;
-            for (int i = 0; i < total_tasks; ++i) {
-                difficulties[i] = diff_const;
-            }
+        default:
+            difficultyDistributionType0(total_tasks, difficulties);
             break;
-        }
     }
 }
 
@@ -272,8 +299,8 @@ int main(int argc, char* argv[]) {
     MPI_Type_create_struct(nitems, blocklengths, offsets, types, &mpi_task_type);
     MPI_Type_commit(&mpi_task_type);
 
-    int tasksDistributionType = 0;
-    int difficultyDistributionType = 2;
+    int tasksDistributionType = 2;
+    int difficultyDistributionType = 0;
 
     std::vector<Task> allTasks;
     std::vector<int> difficulties;
