@@ -61,7 +61,6 @@ void *worker_thread(void *arg) {
 
     while (1) {
         Task *task_to_do = NULL;
-        // Поиск невыполненной локальной задачи
         for (int i = 0; i < tasksCount; i++) {
             pthread_mutex_lock(&mtx);
             if (!tasks[i].completed) {
@@ -85,7 +84,6 @@ void *worker_thread(void *arg) {
                 if (remoteTask.taskNumber != -1) {
                     got_task = 1;
                     double res = load_operation(remoteTask.difficulty);
-                    (void)res; // результат можно использовать по необходимости
                     atomic_fetch_add(&performedWeight, remoteTask.difficulty);
                     break;
                 }
