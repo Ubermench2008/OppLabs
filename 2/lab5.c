@@ -23,8 +23,9 @@ typedef struct {
     double result;
 } Task;
 
+long long performedWeight = 0;
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
-atomic_llong performedWeight = 0;
+pthread_mutex_t weight_mtx = PTHREAD_MUTEX_INITIALIZER;
 
 double load_operation(const int difficulty) {
     double accum = 0.0;
@@ -60,31 +61,37 @@ void *worker_thread(void *arg) {
     MPI_Datatype mpi_task_type = args->mpi_task_type;
 
     while (1) {
-        Task *task_to_do = NULL;
+        int idx = -1;
+        pthread_mutex_lock(&mtx);
         for (int i = 0; i < tasksCount; i++) {
-            pthread_mutex_lock(&mtx);
             if (!tasks[i].completed) {
-                task_to_do = &tasks[i];
                 tasks[i].completed = true;
-                pthread_mutex_unlock(&mtx);
+                idx = i;
                 break;
             }
-            pthread_mutex_unlock(&mtx);
         }
-        if (task_to_do != NULL) {
+        pthread_mutex_unlock(&mtx);
+
+        if (idx != -1) {
+            Task *task_to_do = &tasks[idx];
             task_to_do->result = load_operation(task_to_do->difficulty);
-            atomic_fetch_add(&performedWeight, task_to_do->difficulty);
+
+            pthread_mutex_lock(&weight_mtx);
+            performedWeight += task_to_do->difficulty;
+            pthread_mutex_unlock(&weight_mtx);
+
         } else {
             int got_task = 0;
             Task remoteTask;
             for (int i = 0; i < size; i++) {
-                if (i == rank)
-                    continue;
+                if (i == rank) continue;
                 remoteTask = request_task(i, mpi_task_type);
                 if (remoteTask.taskNumber != -1) {
                     got_task = 1;
-                    double res = load_operation(remoteTask.difficulty);
-                    atomic_fetch_add(&performedWeight, remoteTask.difficulty);
+                    (void)load_operation(remoteTask.difficulty);
+                    pthread_mutex_lock(&weight_mtx);
+                    performedWeight += remoteTask.difficulty;
+                    pthread_mutex_unlock(&weight_mtx);
                     break;
                 }
             }
@@ -106,26 +113,29 @@ void server_thread(int rank, int size, Task *tasks, int tasksCount, MPI_Datatype
         MPI_Recv(&request, 1, MPI_INT, MPI_ANY_SOURCE, REQUEST_TAG, MPI_COMM_WORLD, &status);
         if (status.MPI_SOURCE == rank)
             break;
-        Task task_to_send;
-        int found = 0;
+
+        int idx = -1;
+        pthread_mutex_lock(&mtx);
         for (int i = 0; i < tasksCount; i++) {
-            pthread_mutex_lock(&mtx);
             if (!tasks[i].completed) {
-                found = 1;
                 tasks[i].completed = true;
-                task_to_send = tasks[i];
-                pthread_mutex_unlock(&mtx);
+                idx = i;
                 break;
             }
-            pthread_mutex_unlock(&mtx);
         }
-        if (!found)
+        pthread_mutex_unlock(&mtx);
+
+        Task task_to_send;
+        if (idx != -1) {
+            task_to_send = tasks[idx];
+        } else {
             task_to_send.taskNumber = -1;
+        }
+
         MPI_Send(&task_to_send, 1, mpi_task_type, status.MPI_SOURCE, TASK_TAG, MPI_COMM_WORLD);
     }
 }
 
-//равномерное распределение
 void distributionType0(int total_tasks, int size, int *sendcounts) {
     int base = total_tasks / size;
     int remainder = total_tasks % size;
@@ -134,7 +144,6 @@ void distributionType0(int total_tasks, int size, int *sendcounts) {
     }
 }
 
-//возрастающая горка
 void distributionType1(int total_tasks, int size, int *sendcounts) {
     int sum_indices = size * (size + 1) / 2;
     double c = (double)total_tasks / (double)sum_indices;
@@ -168,7 +177,6 @@ void distributionType2(int total_tasks, int size, int *sendcounts) {
     }
 }
 
-//Синус
 void distributionType3(int total_tasks, int size, int *sendcounts) {
     double sum = 0.0;
     double *weights = (double*) malloc(size * sizeof(double));
@@ -217,11 +225,38 @@ void distributionType3(int total_tasks, int size, int *sendcounts) {
     free(indices);
 }
 
-//Все задачи у одного процесса (0)
 void distributionType4(int total_tasks, int size, int *sendcounts) {
     sendcounts[0] = total_tasks;
     for (int i = 1; i < size; i++) {
         sendcounts[i] = 0;
+    }
+}
+
+void distributionType5(int total_tasks, int size, int *sendcounts) {
+    int sum_weights = size * (size + 1) / 2;
+    double c = (double)total_tasks / sum_weights;
+    int sum_assigned = 0;
+
+    for (int i = 0; i < size; i++) {
+        double exact = (size - i) * c;
+        sendcounts[i] = (int)round(exact);
+        sum_assigned += sendcounts[i];
+    }
+
+    int diff = total_tasks - sum_assigned;
+    int idx = 0;
+    while (diff > 0) {
+        sendcounts[idx % size]++;
+        diff--;
+        idx++;
+    }
+    while (diff < 0) {
+        int j = idx % size;
+        if (sendcounts[j] > 1) {
+            sendcounts[j]--;
+            diff++;
+        }
+        idx++;
     }
 }
 
@@ -241,6 +276,9 @@ void create_distribution(int distributionType, int total_tasks, int size, int *s
             break;
         case 4:
             distributionType4(total_tasks, size, sendcounts);
+            break;
+        case 5:
+            distributionType5(total_tasks, size, sendcounts);
             break;
         default:
             distributionType0(total_tasks, size, sendcounts);
@@ -377,7 +415,7 @@ int main(int argc, char* argv[]) {
     MPI_Type_create_struct(nitems, blocklengths, offsets, types, &mpi_task_type);
     MPI_Type_commit(&mpi_task_type);
 
-    int tasksDistributionType = 0;
+    int tasksDistributionType = 5;
     int difficultyDistributionType = 0;
 
     Task *allTasks = NULL;
@@ -430,7 +468,7 @@ int main(int argc, char* argv[]) {
     pthread_join(worker, NULL);
     double end_time = MPI_Wtime();
 
-    long long executedWeight = atomic_load(&performedWeight);
+    long long executedWeight = performedWeight;
 
     long long globalInitial = 0;
     long long globalExecuted = 0;
